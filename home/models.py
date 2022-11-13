@@ -83,7 +83,7 @@ class Notification(models.Model):
     notify_by = models.ForeignKey(User, null=True, blank=True, default='1',
                                   on_delete=models.CASCADE, related_name="notification_by")
 
-    def unseen_notification(user_to):
+    def unseen_notification(user_to): 
 
         return Notification.objects.filter(is_seen=False,user_to=user_to).count()
 
