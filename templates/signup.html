@@ -1,0 +1,30 @@
+{%extends 'base.html'%}
+{%block content %}
+
+<div class="container">
+    <form method="post" action="/signup">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label">USERNAME</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" name="username" placeholder="Enter UserName" required>
+        </div> 
+        <div class="mb-3"> 
+            <label for="formGroupExampleInput4" class="form-label">NAME</label>
+            <input type="text" class="form-control" id="formGroupExampleInput4" name="name" placeholder="Enter Name"required>
+        </div>
+        <div class="mb-3">
+            <label for="formGroupExampleInput5" class="form-label">EMAIL</label>
+            <input type="email" class="form-control" id="formGroupExampleInput5" name="email" placeholder="Enter email" required>
+        </div>
+        <div class="mb-3">
+            <label for="formGroupExampleInput6" class="form-label">PASSWORD</label>
+            <input type="password" class="form-control" id="formGroupExampleInput6" name="password1" placeholder="Enter password" required>
+        </div>
+        <div class="mb-3">
+            <label for="formGroupExampleInput7" class="form-label">CONFIRM PASSWORD</label>
+            <input type="password" class="form-control" id="formGroupExampleInput7" name="password2" placeholder="Enter password again" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>>
+</div>
+{% endblock %}

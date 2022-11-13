@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+
+<div class="container">
+    <h3 id="contacts">CONTACTS</h3>
+     <form class="d-flex my-2" style="width: 300px;" method="post" >
+        {% csrf_token %}
+        <input class="form-control me-2"  name="search" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    <ul class="list-group">
+        {% for i in contacts %}
+        <li class="list-group-item">
+            <a style="text-decoration: none; color: black;" href="{% url 'chat' i.username %}">{{i.username}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% else %}
+<p>Login required.....</p>
+{% endif %}
+{% endblock %}

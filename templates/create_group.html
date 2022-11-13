@@ -1,0 +1,71 @@
+{%extends 'base.html'%}
+{%block content %}
+<!-- <div id="message"></div> -->
+<div class="container">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="groupname" class="form-label">Group Name</label>
+        <input type="text" class="form-control" id="groupname" name="groupname" placeholder="Enter Group Name" required>
+    </div>
+    <div class="mb-3">
+        <label for="groupdesc" class="form-label">Group Description</label>
+        <textarea class="form-control" id="groupdesc" name="groupdesc" aria-label="With textarea" required></textarea>
+    </div>
+    <div class="mb-2">
+        <label>Group members</label>
+        {% for i in users %}
+        <br><input type="checkbox" class="members" value="{{i}}" name="member{{i.username}}">
+        {{i.username}}
+        {% endfor %}
+    </div>
+    <button type="submit" id="createbtn" class="btn btn-primary">Create</button>
+
+    
+</div>
+<script>
+    var btn = document.getElementById("createbtn")
+    btn.addEventListener("click", () => {
+        var data = new FormData()
+        const groupname = document.getElementById("groupname").value
+        const csrf = document.getElementsByName('csrfmiddlewaretoken')
+        const groupdesc = document.getElementById("groupdesc").value
+        const members = [...document.getElementsByClassName("members")]
+        data['csrfmiddlewaretoken'] = csrf[0].value
+        data["groupname"] = groupname;
+        data["groupdesc"] = groupdesc;
+        var memberarr = []
+        members.forEach(element => {
+            if (element.checked) {
+                memberarr.push(element.value)
+            }
+        })
+        data["members"] = memberarr
+        
+        params={
+            method:'POST',
+            headers: {
+                'Accept': 'application/json',  
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify(data)
+        }
+        
+        fetch("http://127.0.0.1:8000/creategroup",params).then((response)=>{
+            return response.json
+        }).then((data)=>{
+            // alert("success",data)
+            console.log(data)
+        }).catch((error)=>{ 
+            console.error('Error:', error)
+        });
+        document.getElementById("groupname").value=""
+        document.getElementById("groupdesc").value=""
+        var checkbox = [...document.getElementsByClassName("members")]
+        checkbox.forEach(element => {
+            element.checked=false
+        })
+    }
+)
+
+</script>
+{% endblock %}

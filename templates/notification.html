@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{{request.user.username|json_script:"room-name"}}
+
+<div class="container">
+    <h1>{{request.user}}</h1>
+    <h4>Notifications</h4>
+    <div class="container" id="notifications"></div>
+
+</div>
+
+<script>
+    var room_name = JSON.parse(document.getElementById("room-name").textContent)
+    console.log(room_name)
+    var url = "ws://" + window.location.host + "/notification/" + room_name + "/"
+    const w = new WebSocket(url)
+    console.log("url found")
+    w.onopen = function (event) {
+
+    }
+    w.onmessage = function (event) {
+        console.log("message from server", event)
+        var data = JSON.parse(event.data)
+        console.log(data.group_or__contact)
+        var color="danger"
+        console.log(data.is_seen)
+        if(data.is_seen){
+            color="primary"
+        }
+        if(data.is_group){
+            document.getElementById("notifications").innerHTML += `<li class="list-group-item bg-${color}">
+                <a style="text-decoration: none; color: black;" href="group/${data.group_or__contact}">${data.msg} at ${data.date}  seen ${data.is_seen}</a>
+            </li>`
+        }
+        else{
+            document.getElementById("notifications").innerHTML += `<li class="list-group-item bg-${color}">
+                <a style="text-decoration: none; color: black;" href="chat/${data.group_or__contact}">${data.msg} at ${data.date}  seen ${data.is_seen}</a>
+            </li>`
+        }    
+    }
+    w.onclose = function (event) {
+        w.send("message recieved and connection closed")
+        console.log("connection closes", event)
+    }
+</script>
+{% endblock %}

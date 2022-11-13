@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{{chat_with|json_script:"chat-with"}}
+{{group_name|json_script:"group-name"}}
+<div class="container">
+    <h1>{{chat_with}}</h1>
+    <textarea class="form-control" id="chat-log" aria-label="With textarea" rows="10" cols="50" readonly></textarea><br>
+    <input type="text" id="chat-message-input" class="form-control">
+    <input type="hidden" id="sender" value="{{request.user}}" class="form-control">
+    <button type="submit" id="send-btn" class="btn btn-primary">Send</button>
+</div>
+
+<script>
+    var group_name=JSON.parse(document.getElementById("group-name").textContent)
+    var send_to=JSON.parse(document.getElementById("chat-with").textContent)
+    
+    var url="ws://"+window.location.host+"/chat/"+group_name+"/"
+    console.log(group_name)
+    const w = new WebSocket(url)
+    console.log("url found")
+    w.onopen = function (event) {
+    }
+    w.onmessage = function (event) {
+        console.log(data)
+        var data = JSON.parse(event.data)
+        
+        document.querySelector("#chat-log").value += (data.sender+' : '+data.msg+'\n')
+    }
+    w.onclose = function (event) {
+        w.send("message recieved and connection closed")
+        console.log("connection closes", event)
+    }
+    var sendbtn = document.getElementById("send-btn")
+    sendbtn.onclick = (event) => {
+        var messagedom = document.getElementById("chat-message-input")
+        var sender = document.getElementById("sender").value
+        var message = messagedom.value
+        w.send(JSON.stringify({
+            'msg': message,
+            'sender':sender,
+            'send_to':send_to
+        }))
+        messagedom.value = ""
+    }
+
+</script>
+{% endblock %}
